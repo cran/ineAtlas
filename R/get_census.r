@@ -1,21 +1,19 @@
-#' Fetch data from the ineAtlas data repository
+#' Fetch 2021 Census data from the ineAtlas data repository
 #' 
-#' Downloads and extracts compressed data files from the ineAtlas data repository,
-#' providing access to various socioeconomic indicators at different geographic levels.
+#' Downloads and extracts compressed census data files from the ineAtlas data repository,
+#' providing access to detailed demographic, socioeconomic and housing indicators at 
+#' different geographic levels from the 2021 Population and Housing Census.
 #' 
-#' @param category Character string specifying the data category. Must be one of:
-#'   "income", "income_sources", "demographics", "distribution_sex",
-#'   "distribution_sex_age", "distribution_sex_nationality", or "gini_p80p20"
 #' @param level Character string specifying the geographic level. Must be one of:
 #'   "municipality", "district", or "tract"
 #' @param cache Logical indicating whether to cache the extracted data. Default is TRUE.
 #'   Cached data is stored uncompressed for faster access.
 #' @param cache_dir Character string specifying the cache directory. Default is tempdir().
 #' 
-#' @return A tibble containing the requested data. Distribution data will include
-#'   additional columns for demographic breakdowns (sex, age, nationality).
-#'   The data is automatically extracted from compressed files and cached
-#'   locally if requested.
+#' @return A tibble containing the requested census data at the specified geographic level.
+#'   The data includes demographic, socioeconomic and housing indicators from the 2021
+#'   Population and Housing Census. The data is automatically extracted from compressed 
+#'   files and cached locally if requested.
 #' 
 #' @importFrom dplyr %>% filter select mutate
 #' @importFrom readr read_csv write_csv
@@ -26,38 +24,23 @@
 #' 
 #' @examples
 #' \donttest{
-#' # Get municipality level income data
-#' income_data <- get_atlas("income", "municipality")
+#' # Get municipality level census data
+#' mun_data <- get_census("municipality")
 #' 
-#' # Get district level demographics without caching
-#' demo_data <- get_atlas("demographics", "district", cache = FALSE)
+#' # Get district level census data without caching
+#' dist_data <- get_census("district", cache = FALSE)
 #' 
-#' # Get income distribution indicators by sex
-#' sex_dist <- get_atlas("distribution_sex", "municipality")
-#' 
-#' # Get inequality indicators including Gini coefficient
-#' gini_data <- get_atlas("gini_p80p20", "municipality")
+#' # Get census tract level data
+#' tract_data <- get_census("tract")
 #' }
 #' 
 #' @note Data files are stored compressed on the repository to reduce size and
-#'   download times. The function handles decompression automatically.
-get_atlas <- function(category, level, cache = TRUE, cache_dir = tempdir()) {
+#'   download times. The function handles decompression automatically. Census data
+#'   is only available for 2021.
+get_census <- function(level, cache = TRUE, cache_dir = tempdir()) {
   # Validate inputs
-  valid_categories <- c(
-    "income", 
-    "income_sources", 
-    "demographics",
-    "distribution_sex",
-    "distribution_sex_age",
-    "distribution_sex_nationality",
-    "gini_p80p20" 
-  )
-  
   valid_levels <- c("municipality", "district", "tract")
   
-  if (!category %in% valid_categories) {
-    stop("Category must be one of: ", paste(valid_categories, collapse = ", "))
-  }
   if (!level %in% valid_levels) {
     stop("Level must be one of: ", paste(valid_levels, collapse = ", "))
   }
@@ -65,24 +48,14 @@ get_atlas <- function(category, level, cache = TRUE, cache_dir = tempdir()) {
   # Construct the GitHub raw content URL
   base_url <- "https://raw.githubusercontent.com/pablogguz/ineAtlas.data/main/data"
   
-  # Determine the correct filename based on category (now using .zip extension)
-  if (category == "distribution_sex") {
-    filename <- paste0("distribution_sex/distribution_sex_", level, ".zip")
-  } else if (category == "distribution_sex_age") {
-    filename <- paste0("distribution_sex_age/distribution_sex_age_", level, ".zip")
-  } else if (category == "distribution_sex_nationality") {
-    filename <- paste0("distribution_sex_nationality/distribution_sex_nationality_", level, ".zip")
-  } else if (category == "gini_p80p20") {
-    filename <- paste0("gini_p80p20/gini_p80p20_", level, ".zip")
-  } else {
-    filename <- paste0(category, "/", category, "_", level, ".zip")
-  }
+  # Construct filename
+  filename <- paste0("census_2021/census_2021_", level, ".zip")
   
   url <- file.path(base_url, filename)
   
   # Set up caching (still using .csv for cached files)
   if (cache) {
-    cache_file <- file.path(cache_dir, paste0("ineatlas_", category, "_", level, ".csv"))
+    cache_file <- file.path(cache_dir, paste0("ineatlas_census_2021_", level, ".csv"))
     
     # Check if cached file exists and is less than 24 hours old
     if (file.exists(cache_file)) {
