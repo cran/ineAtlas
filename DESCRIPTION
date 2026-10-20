@@ -1,6 +1,6 @@
 Package: ineAtlas
 Title: Access to Spanish Household Income Distribution Atlas Data
-Version: 0.1.4
+Version: 0.2.1
 Authors@R: 
     person("Pablo", "García Guzmán", , "garciagp@ebrd.com", role = c("aut", "cre", "cph"))
 Description: Provides access to granular socioeconomic indicators from the
@@ -24,10 +24,10 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 NeedsCompilation: no
-Packaged: 2025-09-11 15:12:42 UTC; pablo
+Packaged: 2026-10-19 22:51:22 UTC; pablogguz_
 Author: Pablo García Guzmán [aut, cre, cph]
 Maintainer: Pablo García Guzmán <garciagp@ebrd.com>
 Repository: CRAN
-Date/Publication: 2025-09-11 15:50:02 UTC
+Date/Publication: 2026-10-20 13:30:08 UTC
